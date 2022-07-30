@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply bg-zinc-900 font-mono text-white;
+}
+
+.cool-border {
+  @apply border border-zinc-700 rounded;
+}
+
+.cool-transition {
+  @apply transition-all duration-1000;
+}
+
+.cool-button-header {
+  @apply flex justify-center items-center space-x-2 p-2 cool-border cool-transition hover:bg-zinc-800;
+}
+
+.cool-button {
+  @apply p-2 cool-border cool-transition hover:bg-zinc-800;
+}
