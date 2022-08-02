@@ -5,6 +5,7 @@ import { SessionProvider } from 'next-auth/react'
 import { FiHome, FiUser, FiEye, FiSettings } from 'react-icons/fi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ToastContainer } from 'react-toastify'
+import { NextSeo } from 'next-seo'
 import type { AppProps } from 'next/app'
 import Auth from '../components/auth'
 
@@ -14,90 +15,97 @@ export default function App({ Component, pageProps }: AppProps<{
 }>) {
   const router = useRouter()
   return (
-    <div 
-      className="flex flex-row"
-    >
+    <>
+      <NextSeo
+        title="g-views"
+        description="Be able to recommend your friends and colleagues."
+      />
+
       <div 
-        className="flex flex-col justify-between w-1/6 h-screen cool-border p-4"
+        className="flex flex-row"
       >
-        <button 
-          className="cool-button-header"
-          onClick={() => router.push('/')}
-        >
-          <FiHome/>
-
-          <h1>
-            Home
-          </h1>
-        </button>
-
         <div 
-          className="flex flex-col justify-between space-y-2"
+          className="flex flex-col justify-between w-1/6 h-screen cool-border p-4"
         >
           <button 
             className="cool-button-header"
+            onClick={() => router.push('/')}
           >
-            <FiEye/>
+            <FiHome/>
 
             <h1>
-              Display
+              Home
             </h1>
           </button>
 
+          <div 
+            className="flex flex-col justify-between space-y-2"
+          >
+            <button 
+              className="cool-button-header"
+            >
+              <FiEye/>
+
+              <h1>
+                Display
+              </h1>
+            </button>
+
+            <button 
+              className="cool-button-header"
+              onClick={() => router.push('/myself')}
+            >
+              <FiUser/>
+
+              <h1>
+                Myself
+              </h1>
+            </button>
+          </div>
+
           <button 
             className="cool-button-header"
-            onClick={() => router.push('/myself')}
+            onClick={() => router.push('/settings')}
           >
-            <FiUser/>
+            <FiSettings/>
 
             <h1>
-              Myself
+              Settings
             </h1>
           </button>
         </div>
 
-        <button 
-          className="cool-button-header"
-          onClick={() => router.push('/settings')}
+        <div 
+          className="flex justify-center items-center w-screen"
         >
-          <FiSettings/>
+          <QueryClientProvider client={queryClient}>
+            <SessionProvider
+              session={pageProps.session}
+            >
+              <ToastContainer
+                position="top-right"
+                theme="dark"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable={false}
+                pauseOnHover
+              />
 
-          <h1>
-            Settings
-          </h1>
-        </button>
-      </div>
-
-      <div 
-        className="flex justify-center items-center w-screen"
-      >
-        <QueryClientProvider client={queryClient}>
-          <SessionProvider
-            session={pageProps.session}
-          >
-            <ToastContainer
-              position="top-right"
-              theme="dark"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable={false}
-              pauseOnHover
-            />
-
-            { Component.defaultProps?.auth ? (
-              <Auth>
+              { Component.defaultProps?.auth ? (
+                <Auth>
+                  <Component {...pageProps} />
+                </Auth>
+              ) : (
                 <Component {...pageProps} />
-              </Auth>
-            ) : (
-              <Component {...pageProps} />
-            ) }
-          </SessionProvider>
-        </QueryClientProvider>
+              ) }
+            </SessionProvider>
+          </QueryClientProvider>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
