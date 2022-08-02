@@ -17,21 +17,21 @@ const MySelf: NextPage = () => {
       enabled: !!session,
    })
 
-   const viewsResponse = useQuery(['views', session], async () => {
+   const viewResponse = useQuery(['view', session], async () => {
       const data = await superagent.get(`/api/user/view`)
       return data.body
    }, {
       enabled: !!session,
    })
 
-   const reputationsResponse = useQuery(['reputations', session], async () => {
+   const reputationResponse = useQuery(['reputation', session], async () => {
       const data = await superagent.get(`/api/user/reputation`)
       return data.body
    }, {
       enabled: !!session,
    })
 
-   if (bioResponse.isLoading || reputationsResponse.isLoading || viewsResponse.isLoading) {
+   if (bioResponse.isLoading || reputationResponse.isLoading || viewResponse.isLoading) {
       return (
          <h1>
             Loading...
@@ -48,8 +48,8 @@ const MySelf: NextPage = () => {
       )
    }
 
-   if (reputationsResponse.error) {
-      router.push(`/error/${reputationsResponse.error}`)
+   if (reputationResponse.error) {
+      router.push(`/error/${reputationResponse.error}`)
       return (
          <h1>
             There is an error...
@@ -57,8 +57,8 @@ const MySelf: NextPage = () => {
       )
    }
 
-   if (viewsResponse.error) {
-      router.push(`/error/${viewsResponse.error}`)
+   if (viewResponse.error) {
+      router.push(`/error/${viewResponse.error}`)
       return (
          <h1>
             There is an error...
@@ -103,23 +103,23 @@ const MySelf: NextPage = () => {
          <div 
             className="flex flex-col space-y-2 cool-border p-2"
          >
-            { !reputationsResponse.data.enabled ? (
-               <h1 className="cool-border p-2">You have not activated the reputations feature.</h1>
+            { !reputationResponse.data.enabled ? (
+               <h1 className="cool-border p-2">You have not activated the reputation feature.</h1>
             ) : (
-               <div className="flex justify-between">
+               <div className="flex justify-between items-center">
                   <FiStar/>
 
-                  <h1>{ reputationsResponse.data.count }</h1>
+                  <h1>{ reputationResponse.data.count } views</h1>
                </div>
             )}
 
-            { !viewsResponse.data.enabled ? (
-               <h1 className="cool-border p-2">You have not activated the views feature.</h1>
+            { !viewResponse.data.enabled ? (
+               <h1 className="cool-border p-2">You have not activated the view feature.</h1>
             ) : (
-               <div className="flex justify-between">
+               <div className="flex justify-between items-center">
                   <FiEye/>
 
-                  <h1>{ viewsResponse.data.count }</h1>
+                  <h1>{ viewResponse.data.count } views</h1>
                </div>
             )}
          </div>
