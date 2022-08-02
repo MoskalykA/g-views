@@ -36,7 +36,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
    switch (method) {
       case 'GET':
-         return res.status(200).send(`<iframe src="https://img.shields.io/static/v1?label=Profile%20views&message=${view?.count}&color=${view?.color}&style=${view?.type}"></iframe>`)
+         return res.status(200).send(`<iframe src="https://img.shields.io/static/v1?label=Profile%20views&message=${view?.count}&color=${view?.color}&style=${view?.type}"/>`)
       default:
          return res.status(405).json({
             error: 'Method not allowed.',
