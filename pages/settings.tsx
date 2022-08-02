@@ -1,31 +1,106 @@
 import type { NextPage } from 'next'
-import { useSession, signIn } from 'next-auth/react'
-import { FiLogIn } from 'react-icons/fi'
+import type { NextRouter } from 'next/router'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import superagent from 'superagent'
+import Checkbox from '../components/checkbox'
+
+const synchronizationViewsParameters = (router: NextRouter, viewsEnabled: boolean, viewsDisplayType?: string) => {
+   superagent.post('/api/user/views').send({
+      viewsEnabled,
+      viewsDisplayType,
+   }).catch((error: string) => {
+      router.push(`/error/${error}`)
+   })
+}
+
+const viewsDisplayList = [
+   {
+      id: 'plastic',
+      name: 'Plastic',
+   },
+   {
+      id: 'flat',
+      name: 'Flat',
+   },
+   {
+      id: 'flat-square',
+      name: 'Flat Square',
+   },
+   {
+      id: 'for-the-badge',
+      name: 'For the Badge',
+   },
+   {
+      id: 'social',
+      name: 'Social',
+   },
+]
 
 const Settings: NextPage = () => {
-   const { data: session } = useSession()
-   if (session) {
-      return (
-         <h1 
-            className="cool-border p-2"
-         >
-            This feature is not available.
-         </h1>
-      )
-   }
-
+   const router = useRouter()
+   const [viewsEnabled, setViewsEnabled] = useState(false)
+   const [viewsDisplayType, setViewsDisplayType] = useState('plastic')
    return (
-      <button
-         className="cool-button-header w-1/2"
-         onClick={() => signIn("github")}
+      <div 
+         className="cool-border w-1/2"
       >
-         <FiLogIn/>
+         <h1 
+            className="text-center bg-zinc-800 p-2"
+         >
+            Profile view count
+         </h1> 
 
-         <h1>
-            Sign in
-         </h1>
-      </button>
+         <div 
+            className="p-2"
+         >
+            <Checkbox
+               label="Enabled this feature"
+               getter={viewsEnabled}
+               setter={setViewsEnabled}
+            >
+               <h1>
+                  Type of display
+               </h1>
+
+               <select 
+                  value={viewsDisplayType}
+                  className="cool-border bg-zinc-900 p-2 focus:outline-none"
+                  onChange={(e) => {
+                     setViewsDisplayType(e.target.value)
+                  }}
+               >
+                  { viewsDisplayList.map((viewsDisplay: {
+                     id: string,
+                     name: string,
+                  }) => {
+                     return (
+                        <option 
+                           key={viewsDisplay.id} 
+                           value={viewsDisplay.id}
+                        >
+                           { viewsDisplay.name }
+                        </option>
+                     )
+                  }) }
+               </select>
+            </Checkbox>
+
+            <button
+               className="cool-button w-full mt-2"
+               onClick={() => {
+                  synchronizationViewsParameters(router, viewsEnabled, viewsDisplayType)
+               }}
+            >
+               Save
+            </button>
+         </div>
+      </div>
    )
+}
+
+Settings.defaultProps = {
+   auth: true,
 }
 
 export default Settings

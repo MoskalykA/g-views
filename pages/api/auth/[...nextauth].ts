@@ -6,10 +6,14 @@ import Prisma from '../../../prisma'
 export const authOptions: NextAuthOptions = {
    providers: [
       GithubProvider({
-         clientId: process.env.GITHUB_ID,
-         clientSecret: process.env.GITHUB_SECRET,
+         clientId: process.env.GITHUB_ID as string,
+         clientSecret: process.env.GITHUB_SECRET as string,
 
-         scope: 'read:user',
+         authorization: {
+            params: {
+               scope: 'read:user',
+            }
+         }
       }),
    ],
    secret: process.env.SECRET,
@@ -18,18 +22,20 @@ export const authOptions: NextAuthOptions = {
          await Prisma.user.upsert({
             create: {
                id: user.id,
-               name: user.name,
-               bio: profile.bio,
-               avatar: profile.avatar_url,
-               viewsEnabled: false,
-               viewsCount: 0,
-               reputationsEnabled: false,
-               reputationsCount: 0,
+               name: user.name as string,
+               bio: profile.bio as string,
+               avatar: profile.avatar_url as string,
+               view: {
+                  create: {},
+               },
+               reputation: {
+                  create: {},
+               },
             },
             update: {
-               name: user.name,
-               bio: profile.bio,
-               avatar: profile.avatar_url,
+               name: user.name as string,
+               bio: profile.bio as string,
+               avatar: profile.avatar_url as string,
             },
             where: {
                id: user.id,
@@ -39,7 +45,7 @@ export const authOptions: NextAuthOptions = {
          return true
       },
       async session({ session, user, token }) {
-         session.user.id = token.sub
+         session.user.id = token.sub as string
          return session
       },
    },

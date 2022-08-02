@@ -1,12 +1,17 @@
-import "../styles/globals.css"
-import { useRouter } from "next/router"
-import { SessionProvider } from "next-auth/react"
-import { FiHome, FiUser, FiEye, FiSettings } from "react-icons/fi"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import type { AppProps } from "next/app"
+import '../styles/globals.css'
+import 'react-toastify/dist/ReactToastify.css'
+import { useRouter } from 'next/router'
+import { SessionProvider } from 'next-auth/react'
+import { FiHome, FiUser, FiEye, FiSettings } from 'react-icons/fi'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ToastContainer } from 'react-toastify'
+import type { AppProps } from 'next/app'
+import Auth from '../components/auth'
 
 const queryClient = new QueryClient()
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps }: AppProps<{
+  auth: any
+}>) {
   const router = useRouter()
   return (
     <div 
@@ -17,7 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
       >
         <button 
           className="cool-button-header"
-          onClick={() => router.push("/")}
+          onClick={() => router.push('/')}
         >
           <FiHome/>
 
@@ -41,7 +46,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
           <button 
             className="cool-button-header"
-            onClick={() => router.push("/myself")}
+            onClick={() => router.push('/myself')}
           >
             <FiUser/>
 
@@ -53,7 +58,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
         <button 
           className="cool-button-header"
-          onClick={() => router.push("/settings")}
+          onClick={() => router.push('/settings')}
         >
           <FiSettings/>
 
@@ -70,7 +75,26 @@ export default function App({ Component, pageProps }: AppProps) {
           <SessionProvider
             session={pageProps.session}
           >
-            <Component {...pageProps} />
+            <ToastContainer
+              position="top-right"
+              theme="dark"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable={false}
+              pauseOnHover
+            />
+
+            { Component.defaultProps?.auth ? (
+              <Auth>
+                <Component {...pageProps} />
+              </Auth>
+            ) : (
+              <Component {...pageProps} />
+            ) }
           </SessionProvider>
         </QueryClientProvider>
       </div>

@@ -8,12 +8,30 @@ generator client {
 }
 
 model User {
-  id                 String  @unique
-  name               String
-  bio                String
-  avatar             String
-  viewsEnabled       Boolean
-  viewsCount         Int
-  reputationsEnabled Boolean
-  reputationsCount   Int
+  id           String     @unique
+  name         String
+  bio          String
+  avatar       String
+  view         View       @relation(fields: [viewId], references: [id])
+  reputation   Reputation @relation(fields: [reputationId], references: [id])
+  viewId       String
+  reputationId String
+}
+
+model View {
+  id      String  @id @default(uuid())
+  enabled Boolean @default(false)
+  type    String  @default("plastic")
+  color   String  @default("green")
+  count   Int     @default(0)
+  User    User[]
+}
+
+model Reputation {
+  id      String  @id @default(uuid())
+  enabled Boolean @default(false)
+  type    String  @default("plastic")
+  color   String  @default("green")
+  count   Int     @default(0)
+  User    User[]
 }
