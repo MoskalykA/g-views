@@ -10,7 +10,6 @@ const Auth: FC<{
 }) => {
    const { data: session } = useSession({
       required: false,
-      on
       onUnauthenticated() {
          toast.success('🤩 You just logged in!', {
             position: 'top-right',
