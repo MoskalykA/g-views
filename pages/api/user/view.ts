@@ -18,9 +18,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       })
    })
 
+   const viewId = user?.viewId
    const view = await Prisma.view.findUnique({
       where: {
-         id: user?.viewId,
+         id: viewId,
       }
    }).catch((error: string) => {
       return res.status(500).json({
@@ -37,19 +38,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
          }
 
          return res.status(200).json({
-            viewEnabled: view.enabled,
-            viewCount: view.count,
+            enabled: view.enabled,
+            count: view.count,
+            type: view.type,
+            color: view.color,
          })
       case 'POST':
-         await Prisma.view.update({
-            where: {
-               id: id as string,
+         await Prisma.view.upsert({
+            create: {
+               enabled: body.enabled,
+               type: body.type,
+               color: body.color,
             },
-            data: {
-               enabled: body.enabled || undefined,
-               type: body.type || undefined,
-               color: body.color || undefined,
-            }
+            update: {
+               enabled: body.enabled,
+               type: body.type,
+               color: body.color,
+            },
+            where: {
+               id: viewId,
+            },
          }).catch((error: string) => {
             return res.status(500).json({
                error: error,

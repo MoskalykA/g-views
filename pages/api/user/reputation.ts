@@ -18,9 +18,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       })
    })
 
+   const reputationId = user?.reputationId
    const reputation = await Prisma.reputation.findUnique({
       where: {
-         id: user?.reputationId,
+         id: reputationId,
       }
    }).catch((error: string) => {
       return res.status(500).json({
@@ -37,25 +38,32 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
          }
 
          return res.status(200).json({
-            reputationEnabled: reputation.enabled,
-            reputationCount: reputation.count,
+            enabled: reputation.enabled,
+            count: reputation.count,
+            type: reputation.type,
+            color: reputation.color,
          })
       case 'POST':
-         await Prisma.reputation.update({
-            where: {
-               id: id as string,
+         await Prisma.reputation.upsert({
+            create: {
+               enabled: body.enabled,
+               type: body.type,
+               color: body.color,
             },
-            data: {
-               enabled: body.enabled || undefined,
-               type: body.type || undefined,
-               color: body.color || undefined,
-            }
+            update: {
+               enabled: body.enabled,
+               type: body.type,
+               color: body.color,
+            },
+            where: {
+               id: reputationId,
+            },
          }).catch((error: string) => {
             return res.status(500).json({
                error: error,
             })
          })
-
+         
          return res.status(200).json({
             success: 'The parameters have been updated.',
          })
