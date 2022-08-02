@@ -16,10 +16,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       })
    })
 
-   const viewId = user?.viewId
-   const view = await Prisma.view.findUnique({
+   const reputationId = user?.reputationId
+   const reputation = await Prisma.reputation.findUnique({
       where: {
-         id: viewId,
+         id: reputationId,
       }
    }).catch((error: string) => {
       return res.status(500).json({
@@ -27,7 +27,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       })
    })
 
-   if(!view?.enabled) {
+   if(!reputation?.enabled) {
       return res.status(500).json({
          error: 'The user has not activated this feature.',
       })
@@ -35,16 +35,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
    switch (method) {
       case 'GET':
-         await Prisma.view.update({
-            where: {
-               id: viewId,
-            },
-            data: {
-               count: view.count + 1,
-            },
-         })
-
-         return res.status(200).send(`<html><body><img src="https://img.shields.io/static/v1?label=Profile%20views&message=${view.count}&color=${view?.color}&style=${view?.type}"/></body></html>`)
+         return res.status(200).send(`<html><body><img src="https://img.shields.io/static/v1?label=Profile%20reputations&message=${reputation.count}&color=${reputation?.color}&style=${reputation?.type}"/></body></html>`)
       default:
          return res.status(405).json({
             error: 'Method not allowed.',
